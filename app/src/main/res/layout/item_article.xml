@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="8dp"
+    app:cardCornerRadius="16dp"
+    app:strokeColor="@color/black">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/articleImage"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:src="@color/cardview_dark_background"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/articleTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="40-year-old man falls 200 feet to his death while canyoneering at national park"
+            android:textColor="#171717"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/articleImage" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/articleTitle">
+
+            <TextView
+                android:id="@+id/articleAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="By : Jon Haworth"
+                android:textColor="@color/grey"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                app:layout_constraintTop_toBottomOf="@id/articleImage" />
+
+            <TextView
+                android:id="@+id/articleDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="415 minutes ago"
+                android:textColor="@color/grey"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                app:layout_constraintTop_toBottomOf="@id/articleImage" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

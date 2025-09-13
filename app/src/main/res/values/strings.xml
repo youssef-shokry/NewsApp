@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">NewsC42</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
+    <string name="good_morning_n_here_is_some_news_for_you">Good Morning \n Here is Some News For You</string>
+
+    <string-array name="theme_options" >
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+</resources>
