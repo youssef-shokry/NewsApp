@@ -1,6 +1,7 @@
 package com.route.newsc42.api.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class ArticleDM(
 
@@ -27,4 +28,4 @@ data class ArticleDM(
 
 	@field:SerializedName("content")
 	val content: String? = null
-)
+): Serializable

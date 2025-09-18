@@ -45,28 +45,3 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 }
-
-///Http Request
-///Link -> BaseUrl/Api Name (Endpoint)/Query Params?
-///Types -> GET, POST
-///Body (POST) -> Json(Java script object notation) - xml - html
-///Headers -> Json
-///Json -> num - null - string - array[Json] - json
-///Http response ->
-/// status code int
-/// Body
-/// Headers
-
-//fun main(){
-//    val p: Person = Person("ahmed", 123, "ahmed@gmail.com",
-//        listOf(Person("ahmed", 123, "email", listOf())))
-//
-//    mapOf<String, Any>(Pair("name", p.name),
-//        Pair("age", p.age),
-//        Pair("email", p.email),
-//        Pair("friends", listOf())
-//    )
-//}
-//data class Person(val name: String, val age: Int,
-//                  val email: String,
-//                  val friends: List<Person>)

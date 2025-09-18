@@ -7,8 +7,8 @@ import com.bumptech.glide.Glide
 import com.route.newsc42.api.model.ArticleDM
 import com.route.newsc42.databinding.ItemArticleBinding
 
-class ArticlesAdapter(var articles: List<ArticleDM> = emptyList<ArticleDM>()) :
-    RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder>() {
+class ArticlesAdapter(var articles: List<ArticleDM> = emptyList()) : RecyclerView.Adapter<ArticlesAdapter.ArticleViewHolder>() {
+    var onArticleClick: OnArticleClick? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -25,12 +25,7 @@ class ArticlesAdapter(var articles: List<ArticleDM> = emptyList<ArticleDM>()) :
         position: Int
     ) {
         val article = articles[position]
-        holder.binding.articleTitle.text = article.title
-        holder.binding.articleAuthor.text = article.author
-        holder.binding.articleDate.text = article.publishedAt
-        Glide.with(holder.binding.root.context)
-            .load(article.urlToImage)
-            .into(holder.binding.articleImage)
+        holder.bind(article)
     }
 
     fun submitList(articles: List<ArticleDM>){
@@ -41,6 +36,20 @@ class ArticlesAdapter(var articles: List<ArticleDM> = emptyList<ArticleDM>()) :
     override fun getItemCount(): Int = articles.size
 
 
-    inner class ArticleViewHolder(val binding: ItemArticleBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ArticleViewHolder(val binding: ItemArticleBinding) : RecyclerView.ViewHolder(binding.root){
+        fun bind(article: ArticleDM){
+
+            binding.articleTitle.text = article.title
+            binding.articleAuthor.text = article.author
+            binding.articleDate.text = article.publishedAt
+            Glide.with(binding.root.context)
+                .load(article.urlToImage)
+                .into(binding.articleImage)
+
+            binding.root.setOnClickListener {
+                onArticleClick?.articleClickListener(article)
+            }
+        }
+
+    }
 }

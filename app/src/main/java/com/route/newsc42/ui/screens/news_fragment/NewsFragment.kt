@@ -15,14 +15,19 @@ import com.route.newsc42.api.model.BaseErrorResponse
 import com.route.newsc42.api.model.SourceDM
 import com.route.newsc42.api.model.SourcesResponse
 import com.route.newsc42.databinding.FragmentNewsBinding
+import com.route.newsc42.ui.screens.article_fragment.BottomSheetArticleFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.Serializable
 import kotlin.collections.forEach
 
 class NewsFragment(val categoryId: String) : Fragment() {
     lateinit var binding: FragmentNewsBinding
     val articleAdapter = ArticlesAdapter()
+    companion object{
+        const val ARTICLE_DETAILS = "articleDetails"
+    }
 
 
     override fun onCreateView(
@@ -37,6 +42,22 @@ class NewsFragment(val categoryId: String) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         loadSources()
         setUpArticlesRecyclerView()
+        intiAdapterListeners()
+    }
+
+    private fun intiAdapterListeners() {
+        articleAdapter.onArticleClick = object : OnArticleClick {
+
+            override fun articleClickListener(article: ArticleDM) {
+
+                val bottomSheetArticleFragment = BottomSheetArticleFragment()
+                bottomSheetArticleFragment.arguments = Bundle().apply {
+                    putSerializable(ARTICLE_DETAILS, article)
+                }
+
+                bottomSheetArticleFragment.show(parentFragmentManager, null)
+            }
+        }
     }
 
     private fun setUpArticlesRecyclerView() {
