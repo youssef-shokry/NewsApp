@@ -37,17 +37,26 @@ android {
 }
 
 dependencies {
-
+    ///
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    /// Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.retrofit.logging.interceptor)
     implementation(libs.retrofit.okhttp)
+    /// Glide
     implementation(libs.glide)
+    /// Kotlin Coroutine - ktx
+    implementation(libs.kotlinx.coroutines.android)
+    ///ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel)
+    ///LifeData
+    implementation(libs.androidx.lifecycle.livedata)
+    ///
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

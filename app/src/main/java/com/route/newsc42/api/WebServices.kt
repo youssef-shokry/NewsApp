@@ -7,15 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WebServices {
-
     @GET("/v2/top-headlines/sources")
-    fun loadSources(
-        @Query("category") categoryId: String
-    ): Call<SourcesResponse>
+    fun loadSources(@Query("category") categoryId: String): SourcesResponse
 
     @GET("/v2/everything")
-    fun loadArticles(
-        @Query("sources") sourceId: String
-    ): Call<ArticlesResponse>
-
+    fun loadArticles(@Query("sources") sourceId: String): ArticlesResponse
 }

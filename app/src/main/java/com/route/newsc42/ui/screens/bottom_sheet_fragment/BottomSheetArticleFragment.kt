@@ -1,4 +1,4 @@
-package com.route.newsc42.ui.screens.article_fragment
+package com.route.newsc42.ui.screens.bottom_sheet_fragment
 
 import android.content.Intent
 import android.os.Build

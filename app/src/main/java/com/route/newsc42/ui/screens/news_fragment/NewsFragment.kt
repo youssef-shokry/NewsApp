@@ -6,23 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
-import com.route.newsc42.api.ApiManager
 import com.route.newsc42.api.model.ArticleDM
-import com.route.newsc42.api.model.ArticlesResponse
-import com.route.newsc42.api.model.BaseErrorResponse
 import com.route.newsc42.api.model.SourceDM
-import com.route.newsc42.api.model.SourcesResponse
 import com.route.newsc42.databinding.FragmentNewsBinding
-import com.route.newsc42.ui.screens.article_fragment.BottomSheetArticleFragment
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.Serializable
+import com.route.newsc42.ui.screens.bottom_sheet_fragment.BottomSheetArticleFragment
 import kotlin.collections.forEach
 
 class NewsFragment(val categoryId: String) : Fragment() {
+    lateinit var viewModel: NewsViewModel
     lateinit var binding: FragmentNewsBinding
     val articleAdapter = ArticlesAdapter()
     companion object{
@@ -31,18 +24,48 @@ class NewsFragment(val categoryId: String) : Fragment() {
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNewsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadSources()
+        intiNewsViewModel()
+        setUpObservers()
         setUpArticlesRecyclerView()
         intiAdapterListeners()
+    }
+
+    private fun intiNewsViewModel() {
+        viewModel = ViewModelProvider(this)[NewsViewModel::class.java]
+    }
+
+    private fun setUpObservers() {
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            if (isLoading == true) showLoading()
+            else hideLoading()
+        }
+        viewModel.sourcesErrorMessage.observe(viewLifecycleOwner) { sourcesErrorMessage ->
+            if (sourcesErrorMessage.isNullOrEmpty()) hideError()
+            else showError(errorMessages = sourcesErrorMessage,
+                    onRetryClick = {viewModel.loadSources(categoryId)})
+
+        }
+        viewModel.articlesErrorMessage.observe(viewLifecycleOwner) { articlesErrorMessage ->
+            if(articlesErrorMessage?.first.isNullOrEmpty()) hideError()
+            else showError(errorMessages = articlesErrorMessage.first,
+                onRetryClick = {viewModel.loadArticles(articlesErrorMessage.second)})
+        }
+        viewModel.sources.observe(viewLifecycleOwner) { sources ->
+            if (sources.isNullOrEmpty()) return@observe
+            else showTabLayout(sources)
+        }
+        viewModel.articles.observe(viewLifecycleOwner) { articles ->
+            if (articles.isNullOrEmpty()) return@observe
+            showArticlesList(articles)
+        }
+
     }
 
     private fun intiAdapterListeners() {
@@ -64,43 +87,7 @@ class NewsFragment(val categoryId: String) : Fragment() {
         binding.articlesRecycler.adapter = articleAdapter
     }
 
-    private fun loadSources() {
-        hideError()
-        showLoading()
-        ApiManager.getWebServices().loadSources(categoryId)
-            .enqueue(object : Callback<SourcesResponse> {
-                override fun onResponse(
-                    call: Call<SourcesResponse?>,
-                    response: Response<SourcesResponse?>
-                ) {
-                    hideLoading()
-                    if (response.isSuccessful && response.body() != null) {
-                        showTabLayout(response.body()!!.sources ?: listOf())
-                    } else {
-                        val errorResponse = Gson().fromJson(
-                            response.errorBody()?.string(),
-                            BaseErrorResponse::class.java
-                        )
-                        showError(
-                            errorResponse.message ?: "Something went wrong please try again later "
-                        ) {
-                            loadSources()
-                        }
-                    }
-                }
 
-                override fun onFailure(
-                    call: Call<SourcesResponse?>,
-                    t: Throwable
-                ) {
-                    hideLoading()
-                    showError(t.localizedMessage) {
-                        loadSources()
-                    }
-                }
-
-            })
-    }
 
     private fun showTabLayout(sources: List<SourceDM>) {
         binding.tabLayout.isVisible = true
@@ -110,10 +97,10 @@ class NewsFragment(val categoryId: String) : Fragment() {
             tab.tag = source.id
             binding.tabLayout.addTab(tab)
         }
-        loadArticles(sources[0].id ?: "")
+        viewModel.loadArticles(sourceId = sources[0].id ?: "")
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                loadArticles(tab!!.tag as String)
+                viewModel.loadArticles(tab!!.tag as String)
             }
 
             override fun onTabUnselected(p0: TabLayout.Tab?) {}
@@ -121,27 +108,7 @@ class NewsFragment(val categoryId: String) : Fragment() {
         })
     }
 
-    private fun loadArticles(sourceId: String) {
-        showLoading()
-        ApiManager.getWebServices().loadArticles(sourceId)
-            .enqueue(object : Callback<ArticlesResponse> {
-                override fun onResponse(
-                    call: Call<ArticlesResponse?>,
-                    response: Response<ArticlesResponse?>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        showArticlesList(response.body()!!.articles ?: listOf())
-                    }
-                }
 
-                override fun onFailure(
-                    call: Call<ArticlesResponse?>,
-                    t: Throwable
-                ) {
-                }
-
-            })
-    }
 
     private fun showArticlesList(articles: List<ArticleDM>) {
         hideLoading()
@@ -156,7 +123,7 @@ class NewsFragment(val categoryId: String) : Fragment() {
         binding.loadingProgress.isVisible = true
     }
 
-    fun showError(errorMessages: String, onRetryClick: () -> Unit) {
+    fun showError(errorMessages: String?, onRetryClick: () -> Unit) {
         binding.errorView.root.isVisible = true
         binding.errorView.errorMessage.text = errorMessages
         binding.errorView.retryButton.setOnClickListener {
