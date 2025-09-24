@@ -33,7 +33,6 @@ class NewsViewModel: ViewModel() {
     }
 
     // Articles is the news itself
-    //
     fun loadArticles(sourceId: String) {
         sourcesErrorMessage.value = null
         isLoading.value = true
